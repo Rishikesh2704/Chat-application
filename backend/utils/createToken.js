@@ -1,5 +1,15 @@
-import jwt from 'jsonwebtoken'
+import jwt from "jsonwebtoken";
 
 export const createToken = (userId, res) => {
-    jwt.sign() 
-}
+  const secretKey = "1243";
+  jwt.sign(userId, secretKey, { expiresIn: "1h" }, (err, token) => {
+    console.log("User Id:", typeof userId, userId);
+
+    if (err) {
+      res.status(500).send("<h2>Internal Server Error!</h2>");
+      console.log(err);
+    }
+    res.authorization = token;
+    res.send(token);
+  });
+};

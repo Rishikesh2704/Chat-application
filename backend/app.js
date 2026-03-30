@@ -3,6 +3,7 @@ import http from 'http'
 import { Server } from 'socket.io'
 import { signUpController } from './controllers/authControllers.js';
 import { connectDb } from './lib/db.js';
+import authRouter from './routers/auth.js';
 
 
 const app = express();
@@ -16,8 +17,7 @@ app.get('/', (req, res) => {
     res.sendFile(import.meta.dirname + '/index.html')
 })
 
-app.post('/signup', signUpController)
-// app.get('/login', loginContoller)
+app.use('/auth/', authRouter)
 
 io.on('connection', (socket) => {
     socket.on('chat', (msg) => io.emit('chat',msg))
