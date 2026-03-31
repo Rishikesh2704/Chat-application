@@ -13,4 +13,3 @@ const userSchema = new mongoose.Schema(
 );
 
 export const user = mongoose.model("User", userSchema);
-user.createCollection();
