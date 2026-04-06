@@ -5,6 +5,7 @@ import { signUpController } from './controllers/authControllers.js';
 import { connectDb } from './lib/db.js';
 import authRouter from './routers/auth.js';
 import cookies from 'cookie-parser';
+import messagesRouter from './routers/messages.js';
 
 const app = express();
 const server = http.createServer(app)
@@ -19,6 +20,7 @@ app.get('/', (req, res) => {
 })
 
 app.use('/auth/', authRouter)
+app.use('/messages', messagesRouter)
 
 io.on('connection', (socket) => {
     socket.on('chat', (msg) => io.emit('chat',msg))
