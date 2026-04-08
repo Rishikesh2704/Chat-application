@@ -1,23 +1,24 @@
 import mongoose from "mongoose";
-import { user } from "./user.model";
+import { User } from "./user.model.js";
 
 const messagesSchema = new mongoose.Schema(
   {
     SenderId: {
       type: mongoose.Types.ObjectId,
-      ref: user,
+      ref: User,
       required: true,
     },
     ReceiverId: {
       type: mongoose.Types.ObjectId,
-      ref: user,
+      ref: User,
       required: true,
     },
     text: {
-      type: string,
+      type: String,
     },
     image: {
-      type: string,
+      type: String,
+      default:""
     },
   },
   {
