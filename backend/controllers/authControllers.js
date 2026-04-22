@@ -1,7 +1,7 @@
 import { body, matchedData, validationResult } from "express-validator";
 import bcrypt from "bcryptjs";
 import { User } from "../models/user.model.js";
-import { createToken } from "../utils/createToken.js";
+import { createToken, refreshToken } from "../utils/createToken.js";
 import jwt from "jsonwebtoken";
 import cookies from "cookie-parser";
 
@@ -28,14 +28,14 @@ export const signUpController = [
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      console.log(errors.array())
       return res.status(400).send(errors.array());
     }
     try {
       const { email, username, password, profile } = matchedData(req);
-
-      const existingUser = await user.findOne({ email: email });
+      const existingUser = await User.findOne({ email: email });
       if (existingUser) {
-        return res.status(401).send("<h1>User Already Exists!</h1>");
+        return res.status(400).json({message:'User Already Exists!'});
       }
 
       const salt = await bcrypt.genSalt(10);
@@ -48,9 +48,11 @@ export const signUpController = [
         profile,
       });
       await NewUser.save();
-      await createToken(NewUser.id, res);
-      return res.status(201).send({ NewUser });
+      const token = await createToken(NewUser.id, res);
+      const refreshToken = await refreshToken(NewUser.id, res)
+      return res.status(201).send({message:"User Created Successfully!", acessstoken:token, refreshToken});
     } catch (error) {
+      console.log(error)
       res.status(500).send(error);
     }
   },
@@ -61,12 +63,12 @@ export const loginContoller = [
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).send(errors.array());
+      return res.status(404).send(errors.array());
     }
 
     try {
       const { email, password } = matchedData(req);
-      const User = await user.findOne({ email: email });
+      const User = await User.findOne({ email: email });
 
       if (!User) {
         return res.status(404).send("User Doesn't Exist!");

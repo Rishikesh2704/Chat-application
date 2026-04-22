@@ -15,14 +15,14 @@ const server = http.createServer(app)
 const io = new Server(server)
 const PORT = 3000;
 const corsOptions = {
-    origin:'http://localhost:5173',
-    methods:['get', 'post'],
+    origin:['http://localhost:5173'],
+    methods:['GET', 'POST'],
     credentials:true
 }
 
 
-app.use(express.json({extended:false}))
 app.use(cors(corsOptions))
+app.use(express.json({extended:false}))
 app.use(cookies())
 
 app.get('/', (req, res) => {
@@ -39,5 +39,5 @@ io.on('connection', (socket) => {
 
 server.listen(PORT, () => {
     connectDb()
-    console.log("Listening at ",PORT)
+    console.log(`Listening at http://localhost:${PORT}`)
 })
