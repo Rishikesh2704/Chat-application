@@ -11,7 +11,7 @@ export const verifyUser = async(req, res, next) => {
     } catch (error) {
         console.log(error)
         res.status(500).json({
-            message:"UnAuthorized"
+            message:"Unauthorized"
         })
     }
     

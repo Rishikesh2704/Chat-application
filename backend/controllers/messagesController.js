@@ -4,10 +4,9 @@ import { User } from "../models/user.model.js";
 export const getUsersController = async (req, res) => {
   try {
     const { id } = req.user;
-    const users = await User.find({ _id: { $ne: id } }).select("-password");
-    res.status(200).json({
-      Users: users,
-    });
+    const users = await User.find({ _id: { $ne:id} }).select("-password");
+    console.log(users)
+    res.status(200).send(users);
   } catch (error) {
     console.log(error);
     res.status(500).json({
@@ -31,34 +30,33 @@ export const privateMessagesController = async (req, res) => {
       ReceiverId: MessageRecieverId,
     });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(500).json({
-        Message:"Failed Retreive Messages!",
-        error
-    })
+      Message: "Failed Retreive Messages!",
+      error,
+    });
   }
 };
 
-
-export const sendMessagesController = async(req, res) => {
-    try {
-        const { _id : SenderId} = req.user;
-        const { userId : ReceiverId } = req.params
-        const { message } = req.body
-        const newMessage = new messageModel({
-            SenderId,
-            ReceiverId,
-            text:message,
-        })
-        await newMessage.save();
-        res.status(201).json({
-            Message:"Successfully Sent Message!"
-        })
-    } catch (error) {
-        console.log(error)
-        res.status(500).json({
-            Message:"Couldn't Send Message",
-            error
-        })
-    }
-}
+export const sendMessagesController = async (req, res) => {
+  try {
+    const { _id: SenderId } = req.user;
+    const { userId: ReceiverId } = req.params;
+    const { message } = req.body;
+    const newMessage = new messageModel({
+      SenderId,
+      ReceiverId,
+      text: message,
+    });
+    await newMessage.save();
+    res.status(201).json({
+      Message: "Successfully Sent Message!",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      Message: "Couldn't Send Message",
+      error,
+    });
+  }
+};
