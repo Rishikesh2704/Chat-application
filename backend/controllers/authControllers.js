@@ -4,6 +4,7 @@ import { User } from "../models/user.model.js";
 import { createToken, refreshToken } from "../utils/createToken.js";
 import jwt from "jsonwebtoken";
 import cookies from "cookie-parser";
+import { RefreshToken } from "../models/refreshToken.model.js";
 
 const validateSignInUser = [
   body("email")
@@ -67,6 +68,7 @@ export const signUpController = [
       await NewUser.save();
       const token = await createToken(NewUser.id, res);
       const refToken = await refreshToken(NewUser.id, res);
+      const refreshToken = RefreshToken(refToken)
       return res
         .status(201)
         .send({
