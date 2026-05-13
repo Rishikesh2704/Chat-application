@@ -4,7 +4,6 @@ import { User } from "../models/user.model.js";
 import { createToken, refreshToken } from "../utils/createToken.js";
 import jwt from "jsonwebtoken";
 import cookies from "cookie-parser";
-import { RefreshToken } from "../models/refreshToken.model.js";
 
 const validateSignInUser = [
   body("email")
@@ -68,7 +67,6 @@ export const signUpController = [
       await NewUser.save();
       const token = await createToken(NewUser.id, res);
       const refToken = await refreshToken(NewUser.id, res);
-      const refreshToken = RefreshToken(refToken)
       return res
         .status(201)
         .send({
@@ -105,7 +103,9 @@ export const loginContoller = [
         return res.status(401).send("Wrong Password!");
       }
       await createToken(user.id, res);
-      return res.status(200).send({ message: "Logged In!" });
+      const refToken = await refreshToken(user.id, res);
+
+      return res.status(200).send({ message: "Logged In!",refreshToken:refToken });
     } catch (error) {
       console.log(error)
       res.status(500).json({error});
@@ -121,3 +121,29 @@ export const logOutController = (req, res) => {
     res.status(500).send(error);
   }
 };
+
+export const refreshTokenController = async(req, res) => {
+   const { refreshToken } = req.body.refreshToken
+
+   if(!refreshToken){
+    res.status(401).json({message:"Empty Refresh Token"})
+   }
+
+   try {
+      const decodedToken = jwt.verify(refreshToken, process.env.JWT_REFRESH_TOKEN_SECRET)
+      if(!decodedToken){
+        res.status(404).json({message:"Invalid Refresh token"})
+      }
+      const accessToken = await createToken(valid.userID,res)
+      const newRefreshToken = await refreshToken(valid.userID,res)
+      res.status(200).json({
+        message:"Created New AccessToken",
+        accessToken,
+        refreshTOken:newRefreshToken,
+      })
+   } catch (error) {
+      console.log(error)
+      res.status(500).json({message:"Internal Server Error"})
+   }
+   
+}

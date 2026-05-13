@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { verifyUser } from "../utils/verifyUser.js";
-import { getUsersController, privateMessagesController, sendMessagesController } from "../controllers/messagesController.js";
+import { getUsersController, privateMessagesController, sendMessagesController } from "../controllers/messages.controller.js";
 
 const messagesRouter = Router();
 
