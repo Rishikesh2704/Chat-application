@@ -123,19 +123,18 @@ export const logOutController = (req, res) => {
 };
 
 export const refreshTokenController = async(req, res) => {
-   const { refreshToken } = req.body.refreshToken
-
-   if(!refreshToken){
+   const incomingRefreshToken = req.cookies.refreshToken
+   if(!incomingRefreshToken){
     res.status(401).json({message:"Empty Refresh Token"})
    }
 
    try {
-      const decodedToken = jwt.verify(refreshToken, process.env.JWT_REFRESH_TOKEN_SECRET)
+      const decodedToken = jwt.verify(incomingRefreshToken, process.env.JWT_REFRESH_TOKEN_SECRET)
       if(!decodedToken){
         res.status(404).json({message:"Invalid Refresh token"})
       }
-      const accessToken = await createToken(valid.userID,res)
-      const newRefreshToken = await refreshToken(valid.userID,res)
+      const accessToken = await createToken(decodedToken.userID,res)
+      const newRefreshToken = await refreshToken(decodedToken.userID,res)
       res.status(200).json({
         message:"Created New AccessToken",
         accessToken,
