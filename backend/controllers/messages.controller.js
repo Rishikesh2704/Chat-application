@@ -5,7 +5,6 @@ export const getUsersController = async (req, res) => {
   try {
     const { id } = req.user;
     const users = await User.find({ _id: { $ne:id} }).select("-password");
-    console.log(users)
     res.status(200).send(users);
   } catch (error) {
     console.log(error);
